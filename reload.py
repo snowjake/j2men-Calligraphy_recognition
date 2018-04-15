@@ -1,10 +1,17 @@
 import tensorflow as tf
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
+
 
 tf.set_random_seed(1)
 np.random.seed(1)
 
+new_data = pd.read_csv("j2mentest.csv")
+new_data = new_data.values.astype(np.float32)
+np.random.shuffle(new_data)
+
+test_x = new_data
 
 def reload():
     print('This is reload')
@@ -32,14 +39,14 @@ def reload():
     flat = tf.reshape(pool2, [-1, 32*32*32])          # -> (7*7*32, )
     output = tf.layers.dense(flat, 1)              # output layer
 
-    loss = tf.losses.softmax_cross_entropy(onehot_labels=tf_y, logits=output)           # compute cost
-    train_op = tf.train.AdamOptimizer(LR).minimize(loss)
+    #loss = tf.losses.softmax_cross_entropy(onehot_labels=tf_y, logits=output)           # compute cost
+    #train_op = tf.train.AdamOptimizer(LR).minimize(loss)
 
     sess = tf.Session()
     # don't need to initialize variables, just restoring trained variables
     saver = tf.train.Saver()  # define a saver for saving and restoring
     saver.restore(sess, 'cnnnet/j2men')
-    test_output = sess.run(output, {tf_x: test_x[:10]})
+    test_output = sess.run(output, {tf_x: test_x[:100]})
     pred_y = np.argmax(test_output, 1)
     print(pred_y, 'prediction number')
 
